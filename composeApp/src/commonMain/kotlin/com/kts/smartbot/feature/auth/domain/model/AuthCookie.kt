@@ -6,6 +6,7 @@ data class AuthCookie(
 )
 
 private val authSessionCookieNames = setOf(
+    "spro_session",
     "sessionid",
     "session",
     "auth_session",

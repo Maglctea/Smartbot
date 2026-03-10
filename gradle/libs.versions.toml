@@ -18,6 +18,7 @@ kotlinx-serialization = "1.10.0"
 material3 = "1.10.0-alpha05"
 ktor = "3.4.1"
 kotlinx-coroutines = "1.10.2"
+napier = "2.7.1"
 
 
 [libraries]
@@ -48,6 +49,7 @@ ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "kto
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 
 [plugins]

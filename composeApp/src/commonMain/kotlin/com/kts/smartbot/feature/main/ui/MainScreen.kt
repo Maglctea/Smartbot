@@ -27,12 +27,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import com.kts.smartbot.core.theme.SmartbotDefaults
 import com.kts.smartbot.core.theme.smartbotScreenBackgroundBrush
-import com.kts.smartbot.feature.chats.ui.ChatsScreen
+import com.kts.smartbot.feature.conversations.ui.ConversationsRoute
 import com.kts.smartbot.feature.home.ui.HomeScreen
 import com.kts.smartbot.feature.profile.ui.ProfileScreen
 import org.jetbrains.compose.resources.stringResource
 import smartbot.composeapp.generated.resources.Res
-import smartbot.composeapp.generated.resources.home_tab_chats
+import smartbot.composeapp.generated.resources.home_tab_conversations
 import smartbot.composeapp.generated.resources.home_tab_home
 import smartbot.composeapp.generated.resources.home_tab_profile
 
@@ -68,7 +68,7 @@ fun MainScreen(
         ) {
             when (currentTab) {
                 MainTab.Home -> HomeScreen(onOpenOnboarding = onOpenOnboarding)
-                MainTab.Chats -> ChatsScreen()
+                MainTab.Conversations -> ConversationsRoute()
                 MainTab.Profile -> ProfileScreen(onLogoutClicked = onLogoutClicked)
             }
         }
@@ -116,7 +116,7 @@ private fun MainTabIcon(
 
     when (tab) {
         MainTab.Home -> MainHomeIcon(tint = tint)
-        MainTab.Chats -> MainChatIcon(tint = tint)
+        MainTab.Conversations -> MainConversationIcon(tint = tint)
         MainTab.Profile -> MainProfileIcon(tint = tint)
     }
 }
@@ -149,7 +149,7 @@ private fun MainHomeIcon(tint: Color) {
 }
 
 @Composable
-private fun MainChatIcon(tint: Color) {
+private fun MainConversationIcon(tint: Color) {
     Canvas(modifier = Modifier.size(20.dp)) {
         val stroke = Stroke(width = size.minDimension * 0.1f)
         val bubble = Path().apply {
@@ -206,7 +206,7 @@ private fun MainProfileIcon(tint: Color) {
 
 private enum class MainTab {
     Home,
-    Chats,
+    Conversations,
     Profile,
 }
 
@@ -214,7 +214,7 @@ private enum class MainTab {
 private fun MainTab.label(): String {
     return when (this) {
         MainTab.Home -> stringResource(Res.string.home_tab_home)
-        MainTab.Chats -> stringResource(Res.string.home_tab_chats)
+        MainTab.Conversations -> stringResource(Res.string.home_tab_conversations)
         MainTab.Profile -> stringResource(Res.string.home_tab_profile)
     }
 }

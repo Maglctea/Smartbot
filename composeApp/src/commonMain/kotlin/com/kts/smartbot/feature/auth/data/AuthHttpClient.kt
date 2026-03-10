@@ -1,6 +1,7 @@
 package com.kts.smartbot.feature.auth.data
 
 import com.kts.smartbot.core.config.LocalAuthConfig
+import com.kts.smartbot.core.logging.NapierKtorLogger
 import com.kts.smartbot.feature.auth.domain.repository.AuthSessionRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
@@ -8,7 +9,6 @@ import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
 import io.ktor.http.ContentType
@@ -27,6 +27,13 @@ internal fun io.ktor.client.HttpClientConfig<*>.configureAuthHttpClient(
         header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
         header(HttpHeaders.Origin, LocalAuthConfig.authApiOrigin)
         header("Referer", LocalAuthConfig.authLoginReferer)
+        sessionRepository.getCookies()
+            .firstOrNull { cookie -> cookie.name.equals("spro_session", ignoreCase = true) }
+            ?.value
+            ?.takeIf { value -> value.isNotBlank() }
+            ?.let { sessionToken ->
+                header("spro_session", sessionToken)
+            }
     }
     install(HttpCookies) {
         storage = AuthCookiesStorage(sessionRepository = sessionRepository)
@@ -41,9 +48,13 @@ internal fun io.ktor.client.HttpClientConfig<*>.configureAuthHttpClient(
         exponentialDelay()
     }
     install(Logging) {
-        logger = object : Logger {
-            override fun log(message: String) = Unit
+        logger = NapierKtorLogger
+        level = LogLevel.INFO
+        sanitizeHeader { header ->
+            header == HttpHeaders.Cookie ||
+                header == HttpHeaders.SetCookie ||
+                header.equals("spro_session", ignoreCase = true) ||
+                header == HttpHeaders.Authorization
         }
-        level = LogLevel.NONE
     }
 }
