@@ -8,6 +8,8 @@ import com.kts.smartbot.feature.auth.domain.repository.AuthSessionRepository
 import com.kts.smartbot.feature.auth.domain.usecase.IsUserAuthorizedUseCase
 import com.kts.smartbot.feature.auth.domain.usecase.LoginUseCase
 import com.kts.smartbot.feature.auth.domain.usecase.LogoutUseCase
+import com.kts.smartbot.feature.conversations.data.ConversationsRepositoryImpl
+import com.kts.smartbot.feature.conversations.domain.repository.ConversationsRepository
 import com.kts.smartbot.feature.onboarding.data.StaticOnboardingRepository
 import com.kts.smartbot.feature.onboarding.domain.repository.OnboardingRepository
 import com.kts.smartbot.feature.onboarding.domain.usecase.GetOnboardingPagesUseCase
@@ -27,6 +29,12 @@ val appModule = module {
         RemoteAuthRepository(
             httpClient = get(),
             sessionRepository = get(),
+            json = get(),
+        )
+    }
+    single<ConversationsRepository> {
+        ConversationsRepositoryImpl(
+            httpClient = get(),
             json = get(),
         )
     }

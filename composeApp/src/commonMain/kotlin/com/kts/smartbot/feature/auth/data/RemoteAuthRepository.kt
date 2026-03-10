@@ -1,5 +1,6 @@
 package com.kts.smartbot.feature.auth.data
 
+import io.github.aakira.napier.Napier
 import com.kts.smartbot.feature.auth.domain.model.AuthFailureReason
 import com.kts.smartbot.feature.auth.domain.model.LoginRequest
 import com.kts.smartbot.feature.auth.domain.model.LoginResult
@@ -42,16 +43,28 @@ class RemoteAuthRepository(
                 )
             }
             val body = response.bodyAsText()
+            Napier.d(tag = "AuthApi") { "POST /api/auth/login -> ${response.status.value}" }
 
             if (response.status.isSuccess()) {
+                Napier.d(tag = "AuthApi") { "Login success body: $body" }
+                Napier.d(tag = "AuthApi") {
+                    "Stored cookies after login: ${
+                        sessionRepository.getCookies().joinToString(
+                            separator = ", ",
+                            transform = { cookie -> cookie.name },
+                        )
+                    }"
+                }
                 val payload = body.decodeApiMessage()
                 if (payload?.status.equals("error", ignoreCase = true)) {
+                    Napier.w(tag = "AuthApi") { "Login returned error payload: $body" }
                     sessionRepository.clear()
                     LoginResult.Failure(reason = mapFailureReason(response.status, payload))
                 } else {
                     LoginResult.Success
                 }
             } else {
+                Napier.e(tag = "AuthApi") { "Login failed with body: $body" }
                 sessionRepository.clear()
                 LoginResult.Failure(
                     reason = mapFailureReason(
@@ -63,6 +76,7 @@ class RemoteAuthRepository(
         } catch (cancellationException: CancellationException) {
             throw cancellationException
         } catch (_: Throwable) {
+            Napier.e(tag = "AuthApi") { "Login request crashed" }
             sessionRepository.clear()
             LoginResult.Failure(reason = AuthFailureReason.Network)
         }
